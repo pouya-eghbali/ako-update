@@ -3,10 +3,12 @@ const { exec } = require('child_process');
 
 const { COMMAND: command, KEY: key } = process.env
 
+const log = (...args) => console.log(new Date(), ...args)
+
 const connect = () => {
   const ws = new WebSocket(process.env.HOST);
 
-  ws.on('error', function () {
+  ws.on('error', function (error) {
 
   })
 
@@ -24,12 +26,12 @@ const connect = () => {
     const { event, data } = JSON.parse(message)
     if (event == 'change') {
       const { build } = data
-      console.log(new Date(), `New build: ${build} available`);
+      log(`New build: ${build} available`);
       exec(`${command} ${build} ${key}`,
         (error, stdout, stderr) => {
           if (error !== null) {
-            console.log(new Date(), `Fetch error: ${error}`);
-            console.log(stderr);
+            log(`Fetch error: ${error}`);
+            log(stderr);
           }
         });
     }
